@@ -24,13 +24,6 @@ COPY django_project django_project/
 COPY apps apps/
 COPY manage.py manage.py
 
-ARG SECRET_KEY
-ARG DATABASE_HOST
-ARG DATABASE_PORT
-ARG DATABASE_USER
-ARG DATABASE_PASSWORD
-
-RUN python manage.py check --deploy
 RUN ["chmod", "+x", "./docker-entrypoint.sh"]
 EXPOSE 8000
 ENTRYPOINT ["./docker-entrypoint.sh"]
