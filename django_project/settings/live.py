@@ -20,3 +20,6 @@ DATABASES["default"].update(
         "PASSWORD": os.environ["DATABASE_PASSWORD"],
     }
 )
+
+OAUTH_ACCESS_TOKEN = os.environ["OAUTH_ACCESS_TOKEN"]
+BOTUSER_OAUTH_ACCESS_TOKEN = os.environ["BOTUSER_OAUTH_ACCESS_TOKEN"]

@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "apps.slack.apps.SlackConfig",
+    "apps.slack_inbound.apps.SlackInboundConfig",
     "rest_framework",
 ]
 
@@ -102,3 +102,4 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.postgresql", "NAME": "default"}}
+SLACK_API_TOKEN = "d47b8a8a532e49760fb5893bd3be3330"

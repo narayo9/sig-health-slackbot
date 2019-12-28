@@ -13,8 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from apps.slack import urls as slack_urls
+from apps.slack_inbound import urls as slack_inbound_urls
 from django.contrib import admin
 from django.urls import include, path
 
-urlpatterns = [path("slack/", include(slack_urls)), path("admin/", admin.site.urls)]
+urlpatterns = [
+    path("slack/inbound/", include(slack_inbound_urls)),
+    path("admin/", admin.site.urls),
+]
