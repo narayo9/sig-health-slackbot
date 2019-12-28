@@ -1,3 +1,6 @@
-# from django.contrib import admin
+from apps.slack_outbound.models import EmojiTask, MessageTask, ReplyTask
+from django.contrib import admin
 
-# Register your models here.
+admin.site.register(MessageTask)
+admin.site.register(EmojiTask)
+admin.site.register(ReplyTask)

@@ -18,6 +18,6 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("slack/inbound/", include(slack_inbound_urls)),
+    path("slack/", include(slack_inbound_urls)),
     path("admin/", admin.site.urls),
 ]

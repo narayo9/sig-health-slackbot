@@ -239,6 +239,31 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 category = "main"
+description = "Custom Django field for using enumerations of named constants"
+name = "django-enumfield"
+optional = false
+python-versions = "*"
+version = "2.0.1"
+
+[package.dependencies]
+six = ">=1.10.0"
+
+[package.extras]
+dev = ["black", "isort", "django", "mypy", "django-stubs", "djangorestframework-stubs"]
+
+[[package]]
+category = "main"
+description = "Django model mixins and utilities"
+name = "django-model-utils"
+optional = false
+python-versions = "*"
+version = "4.0.0"
+
+[package.dependencies]
+Django = ">=2.0.1"
+
+[[package]]
+category = "main"
 description = "Web APIs for Django, made easy."
 name = "djangorestframework"
 optional = false
@@ -684,7 +709,7 @@ test = ["zope.event"]
 testing = ["coverage", "nose", "zope.event"]
 
 [metadata]
-content-hash = "aba17e00d72a805818cdc6d6dbb7ad0245d7b401ffd8fb63e6e22f6eef013156"
+content-hash = "369075d2ca0eb3f4349da914d665f58b6f47f29d509ef75168f3f8072c627460"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -819,6 +844,14 @@ daphne = [
 django = [
     {file = "Django-3.0.1-py3-none-any.whl", hash = "sha256:b61295749be7e1c42467c55bcabdaee9fbe9496fdf9ed2e22cef44d9de2ff953"},
     {file = "Django-3.0.1.tar.gz", hash = "sha256:315b11ea265dd15348d47f2cbb044ef71da2018f6e582fed875c889758e6f844"},
+]
+django-enumfield = [
+    {file = "django-enumfield-2.0.1.tar.gz", hash = "sha256:867aa4ac96b58c4834ce060402da5e14b41366806a1cd89170567c4c4f93a626"},
+    {file = "django_enumfield-2.0.1-py2.py3-none-any.whl", hash = "sha256:bb8fb54253b98c0923d29c3492715bf76d22ea183f7482fc60f005436b4240e0"},
+]
+django-model-utils = [
+    {file = "django-model-utils-4.0.0.tar.gz", hash = "sha256:adf09e5be15122a7f4e372cb5a6dd512bbf8d78a23a90770ad0983ee9d909061"},
+    {file = "django_model_utils-4.0.0-py2.py3-none-any.whl", hash = "sha256:9cf882e5b604421b62dbe57ad2b18464dc9c8f963fc3f9831badccae66c1139c"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.11.0-py3-none-any.whl", hash = "sha256:05809fc66e1c997fd9a32ea5730d9f4ba28b109b9da71fccfa5ff241201fd0a4"},

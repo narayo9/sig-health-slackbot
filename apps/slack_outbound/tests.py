@@ -1,21 +1,51 @@
-import slack
+from apps.slack_outbound.models import EmojiTask, MessageTask, ReplyTask
 from django.conf import settings
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
+from django.utils import timezone
+
+from django_project.utils import TaskStatus, use_slack
 
 
-class OutboundTests(SimpleTestCase):
-    def setUp(self):
-        self.client = slack.WebClient(token=settings.BOTUSER_OAUTH_ACCESS_TOKEN)
-
+class OutboundSimpleTests(SimpleTestCase):
     def test_message(self):
-        self.client.chat_postMessage(channel="CRR629M3L", text="웹훅은 기능이 너무 약하네요...")
+        chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
+        chat_postMessage(text="yayaya")
 
     def test_reply(self):
-        self.client.chat_postMessage(
-            channel="CRR629M3L", thread_ts="1577569017.007000", text="와! 댓글!"
-        )
+        chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
+        chat_postMessage(thread_ts="1577569017.007000", text="와! 댓글!")
 
     def test_emoji(self):
-        self.client.reactions_add(
-            channel="CRR629M3L", name="thumbsup", timestamp="1577569017.007000"
+        reactions_add = use_slack().get("reactions_add")
+        reactions_add(name="thumbsup", timestamp="1577569017.007000")
+
+
+class OutboundTests(TestCase):
+    def test_message(self):
+        task = MessageTask.objects.create(execute_at=timezone.now(), text="텍스트1")
+        task.execute()
+        self.assertEqual(task.status, TaskStatus.SUCCESS)
+
+    def test_reply(self):
+        client = use_slack().get("client")
+        response = client.chat_postMessage(
+            channel=settings.SIG_HEALTH_CHANNEL, text="댓글 테스트"
         )
+        thread_ts = response.data["ts"]
+        task = ReplyTask.objects.create(
+            execute_at=timezone.now(), text="댓글이드아", thread_ts=thread_ts
+        )
+        task.execute()
+        self.assertEqual(task.status, TaskStatus.SUCCESS)
+
+    def test_emoji(self):
+        client = use_slack().get("client")
+        response = client.chat_postMessage(
+            channel=settings.SIG_HEALTH_CHANNEL, text="이모지 테스트"
+        )
+        thread_ts = response.data["ts"]
+        task = EmojiTask.objects.create(
+            execute_at=timezone.now(), name="thumbsup", timestamp=thread_ts
+        )
+        task.execute()
+        self.assertEqual(task.status, TaskStatus.SUCCESS)
