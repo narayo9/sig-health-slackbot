@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "apps.slack_inbound.apps.SlackInboundConfig",
     "apps.slack_outbound.apps.SlackOutboundConfig",
+    "apps.sig_health.apps.SigHealthConfig",
 ]
 
 MIDDLEWARE = [
