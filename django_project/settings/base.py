@@ -19,13 +19,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "!ws5-pn3ggc3niw_69hxxbz**f%twy7!facs9ffhl2i$==lch*"
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["sig-health-slackbot-dev.ap-northeast-2.elasticbeanstalk.com"]
+ALLOWED_HOSTS = [
+    "sig-health-slackbot-dev.ap-northeast-2.elasticbeanstalk.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -49,7 +47,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "sig_health_slackbot.urls"
+ROOT_URLCONF = "django_project.urls"
 
 TEMPLATES = [
     {
@@ -67,18 +65,7 @@ TEMPLATES = [
     }
 ]
 
-WSGI_APPLICATION = "sig_health_slackbot.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
+WSGI_APPLICATION = "django_project.wsgi.application"
 
 
 # Password validation
@@ -97,9 +84,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ko"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
@@ -112,3 +99,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+DATABASES = {"default": {"ENGINE": "django.db.backends.postgresql", "NAME": "default"}}

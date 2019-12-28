@@ -9,6 +9,8 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.0.0
 
+ENV DJANGO_SETTINGS_MODULE=django_project.settings.live
+
 RUN pip install "poetry==$POETRY_VERSION"
 RUN python -m venv /venv
 
