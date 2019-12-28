@@ -25,7 +25,7 @@ SECRET_KEY = "!ws5-pn3ggc3niw_69hxxbz**f%twy7!facs9ffhl2i$==lch*"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["sig-health-slackbot-dev.ap-northeast-2.elasticbeanstalk.com"]
 
 
 # Application definition

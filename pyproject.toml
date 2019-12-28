@@ -8,6 +8,7 @@ authors = ["thehoodieguy"]
 python = "^3.8"
 django = "^3.0.1"
 djangorestframework = "^3.11.0"
+daphne = "^2.4.1"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.761"
