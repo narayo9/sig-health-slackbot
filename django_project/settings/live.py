@@ -1,5 +1,7 @@
+import os
+
 from .base import *  # noqa
-from .base import DATABASES, os
+from .base import DATABASES
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
