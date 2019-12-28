@@ -1,5 +1,5 @@
 from .base import *  # noqa
-from .base import DATABASES
+from .base import ALLOWED_HOSTS, DATABASES
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -9,6 +9,8 @@ SECRET_KEY = "!ws5-pn3ggc3niw_69hxxbz**f%twy7!facs9ffhl2i$==lch*"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+ALLOWED_HOSTS += ["*"]
 
 DATABASES["default"].update(
     {

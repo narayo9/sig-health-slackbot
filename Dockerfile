@@ -19,10 +19,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false \
   && poetry install --no-dev --no-interaction --no-ansi
 
-COPY docker-entrypoint.sh ./
-COPY django_project django_project/
-COPY apps apps/
-COPY manage.py manage.py
+COPY . .
 
 RUN ["chmod", "+x", "./docker-entrypoint.sh"]
 EXPOSE 8000
