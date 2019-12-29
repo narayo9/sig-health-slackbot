@@ -1,9 +1,10 @@
-import logging
+import traceback
 from parser.events import MessageChannels, ReactionAdded
 from parser.events.base import SlackEvent
 
 from apps.sig_health.models import Member, Meta, WorkoutAdmit
 from apps.slack_outbound.models import EmojiTask
+from sentry_sdk import capture_exception
 
 
 def create_tasks(event: SlackEvent):
@@ -20,8 +21,9 @@ def create_tasks(event: SlackEvent):
         )
         try:
             admit.full_clean()
-        except BaseException as e:
-            logging.warning(e)
+        except BaseException:
+            traceback.print_exc()
+            capture_exception()
         else:
             admit.save()
 

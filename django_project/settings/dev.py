@@ -20,3 +20,4 @@ DATABASES["default"].update(
         "PASSWORD": "8GbgKTirA0KMaZJlQwNk",
     }
 )
+ENVIRONMENT = "dev"

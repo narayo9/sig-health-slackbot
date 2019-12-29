@@ -20,3 +20,4 @@ DATABASES["default"].update(
         "PASSWORD": os.environ["DATABASE_PASSWORD"],
     }
 )
+ENVIRONMENT = "live"

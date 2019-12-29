@@ -1,10 +1,13 @@
+import sentry_sdk
 import slack
 from dateutil.relativedelta import MO, SU, relativedelta
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django_enumfield import enum
 from django_enumfield.db.fields import EnumField
 from model_utils.models import TimeStampedModel
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 class TaskStatus(enum.Enum):
@@ -73,4 +76,13 @@ def get_week_start_end(weekdelta: int = 0):
             + relativedelta(weekday=SU(+1))
             + relativedelta(weeks=weekdelta)
         ).date(),
+    )
+
+
+def sentry_init():
+    sentry_sdk.init(
+        dsn=settings.SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        environment=settings.ENVIRONMENT,
+        send_default_pii=True,
     )

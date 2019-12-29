@@ -105,3 +105,6 @@ STATIC_URL = "/static/"
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.postgresql", "NAME": "default"}}
 SLACK_API_TOKEN = "d47b8a8a532e49760fb5893bd3be3330"
+
+SENTRY_DSN = "https://b9b5b37d933d4fcdb204f74263553928@sentry.io/1868143"
+ENVIRONMENT = "base"

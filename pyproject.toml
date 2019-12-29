@@ -15,6 +15,7 @@ requests = "^2.22.0"
 slackclient = "^2.5.0"
 django-model-utils = "^4.0.0"
 django-enumfield = "^2.0.1"
+sentry-sdk = "^0.13.5"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^1.20.0"

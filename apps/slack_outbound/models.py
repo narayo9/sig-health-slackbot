@@ -1,6 +1,7 @@
-import logging
+import traceback
 
 from django.db import models
+from sentry_sdk import capture_exception
 
 from django_project.utils import Task, TaskStatus, use_slack
 
@@ -12,8 +13,9 @@ class MessageTask(Task):
         chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
         try:
             chat_postMessage(text=self.text)
-        except BaseException as e:
-            logging.error(msg=str(e), exc_info=True)
+        except BaseException:
+            traceback.print_exc()
+            capture_exception()
             self.status = TaskStatus.FAIL
         else:
             self.status = TaskStatus.SUCCESS
@@ -32,8 +34,9 @@ class ReplyTask(Task):
         chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
         try:
             chat_postMessage(text=self.text, thread_ts=self.thread_ts)
-        except BaseException as e:
-            logging.error(msg=str(e), exc_info=True)
+        except BaseException:
+            traceback.print_exc()
+            capture_exception()
             self.status = TaskStatus.FAIL
         else:
             self.status = TaskStatus.SUCCESS
@@ -54,8 +57,9 @@ class EmojiTask(Task):
         reactions_add = use_slack().get("reactions_add")
         try:
             reactions_add(name=self.name, timestamp=self.timestamp)
-        except BaseException as e:
-            logging.error(msg=str(e), exc_info=True)
+        except BaseException:
+            traceback.print_exc()
+            capture_exception()
             self.status = TaskStatus.FAIL
         else:
             self.status = TaskStatus.SUCCESS
