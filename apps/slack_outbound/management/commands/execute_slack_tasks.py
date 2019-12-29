@@ -18,11 +18,7 @@ class Command(BaseCommand):
         print(f"총 {len(task_list)} 개 준비 완료")
 
         executed = 0
-        for task in [
-            *MessageTask.unexecuted.all(),
-            *ReplyTask.unexecuted.all(),
-            *EmojiTask.unexecuted.all(),
-        ]:
+        for task in task_list:
             try:
                 task.execute()
             except BaseException:
