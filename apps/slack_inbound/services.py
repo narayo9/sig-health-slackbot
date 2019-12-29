@@ -7,7 +7,11 @@ from apps.sig_health.models import Member, Meta, WorkoutAdmit
 
 def create_tasks(event: SlackEvent):
     meta = Meta.objects.get_main()
-    if isinstance(event, ReactionAdded) and event.reaction == meta.admit_emoji:
+    if (
+        isinstance(event, ReactionAdded)
+        and event.reaction == meta.admit_emoji
+        and event.item_user
+    ):
         admitted_by, _ = Member.objects.get_or_create(slack_id=event.user)
         member, _ = Member.objects.get_or_create(slack_id=event.item_user)
         admit = WorkoutAdmit(

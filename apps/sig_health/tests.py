@@ -1,5 +1,5 @@
 from apps.sig_health.models import Member, Meta, Workout, WorkoutAdmit, WorkoutCheer
-from apps.slack_outbound.models import ReplyTask
+from apps.slack_outbound.models import MessageTask, ReplyTask
 from django.test import TestCase
 from model_bakery import baker
 
@@ -88,3 +88,13 @@ class WorkoutTests(TestCase):
             ReplyTask.objects.filter(text__startswith=f"<@{member.slack_id}>").count(),
             7,
         )
+
+
+class MemberTests(TestCase):
+    def setUp(self):
+        self.me = Member.objects.create(slack_id="UCL25JV2R")
+
+    def test_message_task(self):
+        self.me.is_regular = True
+        self.me.save(update_fields=["is_regular"])
+        self.assertEqual(MessageTask.objects.count(), 1)

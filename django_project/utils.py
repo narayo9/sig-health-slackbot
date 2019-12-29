@@ -1,4 +1,5 @@
 import slack
+from dateutil.relativedelta import MO, SU, relativedelta
 from django.db import models
 from django.utils import timezone
 from django_enumfield import enum
@@ -26,7 +27,9 @@ class UnexecutedTaskManager(models.Manager):
 
 class Task(TimeStampedModel):
     status = EnumField(TaskStatus)
-    execute_at = models.DateTimeField(null=False, blank=False, verbose_name="실행 일시")
+    execute_at = models.DateTimeField(
+        null=False, blank=True, verbose_name="실행 일시", auto_now_add=True
+    )
 
     objects = models.Manager()
     unexecuted = UnexecutedTaskManager()
@@ -56,3 +59,18 @@ def use_slack():
         "reactions_add": reactions_add,
         "client": client,
     }
+
+
+def get_week_start_end(weekdelta: int = 0):
+    return (
+        (
+            timezone.now()
+            + relativedelta(weekday=MO(-1))
+            + relativedelta(weeks=weekdelta)
+        ).date(),
+        (
+            timezone.now()
+            + relativedelta(weekday=SU(+1))
+            + relativedelta(weeks=weekdelta)
+        ).date(),
+    )

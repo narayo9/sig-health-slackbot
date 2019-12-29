@@ -1,12 +1,14 @@
 from apps.slack_outbound.models import ReplyTask
-from dateutil.relativedelta import MO, SU, relativedelta
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Count, Q
 from django.utils import timezone
 from django_enumfield import enum
 from django_enumfield.db.fields import EnumField
 from model_utils.models import TimeStampedModel
+
+from django_project.utils import get_week_start_end
 
 
 class UniqueRowIDEnum(enum.Enum):
@@ -63,24 +65,66 @@ class Meta(TimeStampedModel):
     objects = MetaManager()
 
 
+class UnregularMemberManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_regular=False)
+
+    def set_regular(self):
+        start_date, end_date = get_week_start_end()
+        meta = Meta.objects.get_main()
+        self.get_queryset().annotate(
+            this_week_workout_count=Count(
+                "workout_set",
+                filter=Q(created__date__gte=start_date, created__date__lte=end_date),
+            )
+        ).filter(
+            this_week_workout_count__gte=meta.minimum_regular_member_workout_num
+        ).update(
+            is_regular=True
+        )
+
+
+class RegularMemberManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_regular=True)
+
+
 class Member(TimeStampedModel):
     slack_id = models.CharField(max_length=100, primary_key=True)
     is_superuser = models.BooleanField(default=False)
     is_regular = models.BooleanField(default=False)
 
+    objects = models.Manager()
+
     def is_regular_now(self) -> bool:
-        return False
+        start_date, end_date = get_week_start_end()
+        meta = Meta.objects.get_main()
+        return (
+            self.is_regular
+            or self.workout_set.filter(
+                created__date__gte=start_date, created__date__lte=end_date
+            ).count()
+            >= meta.minimum_regular_member_workout_num
+        )
 
     def get_tag_text(self):
         return f"<@{self.slack_id}>"
 
+    def set_regular(self, commit=True):
+        if not self.is_regular and self.is_regular_now():
+            self.is_regular = True
+            if commit:
+                self.save()
+
+    def get_regulared_text(self):
+        return f"{self.get_tag_text()} 님, 정회원이 되신 걸 축하드려요!! :party-blob: :musclegrowth_rainbow:"  # noqa: B950
+
 
 class WorkoutManager(models.Manager):
     def get_current_week_workout_count(self, member: Member) -> int:
+        start_date, end_date = get_week_start_end()
         return Workout.objects.filter(
-            created__date__gte=(timezone.now() + relativedelta(weekday=MO(-1))).date(),
-            created__date__lte=(timezone.now() + relativedelta(weekday=SU(+1))).date(),
-            member=member,
+            created__date__gte=start_date, created__date__lte=end_date, member=member
         ).count()
 
 

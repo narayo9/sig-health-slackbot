@@ -1,7 +1,8 @@
 import random
 
-from apps.sig_health.models import Meta, Workout, WorkoutAdmit, WorkoutCheer
-from django.db.models.signals import post_save
+from apps.sig_health.models import Member, Meta, Workout, WorkoutAdmit, WorkoutCheer
+from apps.slack_outbound.models import MessageTask
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -36,3 +37,20 @@ def create_cheer_reply_when_workout_created(instance, created, **kwargs):
             )
         except ValueError:
             pass
+
+
+@receiver(post_save, sender=Workout)
+def set_regular_workout_created(instance, created, **kwargs):
+    if created:
+        instance.member.set_regular()
+
+
+@receiver(pre_save, sender=Member)
+def set_regulared_member_create_message_task(instance: Member, update_fields, **kwargs):
+    try:
+        old_instance = Member.objects.get(pk=instance.pk)
+    except Member.DoesNotExist:
+        pass
+    else:
+        if not old_instance.is_regular and instance.is_regular:
+            MessageTask.objects.create(text=instance.get_regulared_text())
