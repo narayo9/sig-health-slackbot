@@ -1,3 +1,5 @@
+import datetime
+
 import slack
 from dateutil.relativedelta import MO, SU, relativedelta
 from django.db import models
@@ -34,6 +36,9 @@ class Task(TimeStampedModel):
     objects = models.Manager()
     unexecuted = UnexecutedTaskManager()
 
+    def is_ready(self):
+        return self.execute_at <= timezone.now() and self.status == TaskStatus.READY
+
     class Meta:
         abstract = True
 
@@ -64,12 +69,12 @@ def use_slack():
 def get_week_start_end(weekdelta: int = 0):
     return (
         (
-            timezone.now()
+            datetime.datetime.now()
             + relativedelta(weekday=MO(-1))
             + relativedelta(weeks=weekdelta)
         ).date(),
         (
-            timezone.now()
+            datetime.datetime.now()
             + relativedelta(weekday=SU(+1))
             + relativedelta(weeks=weekdelta)
         ).date(),

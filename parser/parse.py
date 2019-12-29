@@ -6,8 +6,8 @@ from pprint import pprint
 from typing import Tuple, Union
 
 
-def parse(event_raw: bytes) -> Tuple[Union[dict], SlackEvent]:
-    event_dict = json.loads(event_raw.decode("utf-8"))
+def parse(event_raw: str) -> Tuple[Union[dict], SlackEvent]:
+    event_dict = json.loads(event_raw)
     pprint(event_dict)
     return parse_dict(event_dict)
 

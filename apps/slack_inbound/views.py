@@ -1,15 +1,17 @@
 from parser import parse
 
-from apps.slack_inbound.services import create_tasks
 from django.db import transaction
 from rest_framework import views
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from .tasks import process_slack_event
+
 
 class SlackInboundView(views.APIView):
     @transaction.atomic
     def post(self, request: Request, *args, **kwargs):
-        response_data, event = parse(request.body)
-        create_tasks(event)
+        request_body = request.body.decode("utf-8")
+        response_data, event = parse(request_body)
+        process_slack_event(request_body)
         return Response(response_data)
