@@ -1,5 +1,4 @@
 import slack
-from apps.sig_health.models import Meta
 from django.db import models
 from django.utils import timezone
 from django_enumfield import enum
@@ -37,6 +36,8 @@ class Task(TimeStampedModel):
 
 
 def use_slack():
+    from apps.sig_health.models import Meta
+
     meta = Meta.objects.get_main()
     client = slack.WebClient(token=meta.oauth_access_token)
 

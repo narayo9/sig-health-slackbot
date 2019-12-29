@@ -13,8 +13,9 @@ def parse(event_raw: bytes) -> Tuple[Union[dict], SlackEvent]:
 
 
 def parse_dict(event_raw_dict: dict) -> Tuple[Union[dict], SlackEvent]:
-    for event in event_types:
-        if event.is_raw_of_event(event_raw_dict):
-            event = event(**event_raw_dict)
+    event_dict = event_raw_dict.get("event", None) or event_raw_dict
+    for event_type in event_types:
+        if event_type.is_raw_of_event(event_dict):
+            event = event_type(**event_dict)
             return event.get_response_data(), event
     raise UnhandledEventType

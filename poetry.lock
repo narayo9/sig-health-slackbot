@@ -359,6 +359,17 @@ python-versions = "*"
 version = "0.6.1"
 
 [[package]]
+category = "dev"
+description = "Smart object creation facility for Django."
+name = "model-bakery"
+optional = false
+python-versions = "*"
+version = "1.0.2"
+
+[package.dependencies]
+django = ">=1.11.0"
+
+[[package]]
 category = "main"
 description = "multidict implementation"
 name = "multidict"
@@ -709,7 +720,7 @@ test = ["zope.event"]
 testing = ["coverage", "nose", "zope.event"]
 
 [metadata]
-content-hash = "369075d2ca0eb3f4349da914d665f58b6f47f29d509ef75168f3f8072c627460"
+content-hash = "1e228b8e591e5ae07e0af8bb4b96fb72459de5b4aaa9104b054e248e1cc8dc5f"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -888,6 +899,10 @@ isort = [
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
+]
+model-bakery = [
+    {file = "model_bakery-1.0.2-py2.py3-none-any.whl", hash = "sha256:c05901b60d0e9f1a2823af1cdcbce5d1c67dcc1d0e4b8da3d5b6f9ea5706597d"},
+    {file = "model_bakery-1.0.2.tar.gz", hash = "sha256:f0b94fde361abcabaf321c6bb62538aed3909c346ece35c628cb004ff1da6cdc"},
 ]
 multidict = [
     {file = "multidict-4.7.2-cp35-cp35m-macosx_10_13_x86_64.whl", hash = "sha256:8f30ead697c2e37147d82ba8019952b5ea99bd3d1052f1f1ebff951eaa953209"},

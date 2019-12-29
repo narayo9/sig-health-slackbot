@@ -1,4 +1,9 @@
+from apps.slack_outbound.models import ReplyTask
+from dateutil.relativedelta import MO, SU, relativedelta
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 from django_enumfield import enum
 from django_enumfield.db.fields import EnumField
 from model_utils.models import TimeStampedModel
@@ -56,3 +61,76 @@ class Meta(TimeStampedModel):
     )
 
     objects = MetaManager()
+
+
+class Member(TimeStampedModel):
+    slack_id = models.CharField(max_length=100, primary_key=True)
+    is_superuser = models.BooleanField(default=False)
+    is_regular = models.BooleanField(default=False)
+
+    def is_regular_now(self) -> bool:
+        return False
+
+    def get_tag_text(self):
+        return f"<@{self.slack_id}>"
+
+
+class WorkoutManager(models.Manager):
+    def get_current_week_workout_count(self, member: Member) -> int:
+        return Workout.objects.filter(
+            created__date__gte=(timezone.now() + relativedelta(weekday=MO(-1))).date(),
+            created__date__lte=(timezone.now() + relativedelta(weekday=SU(+1))).date(),
+            member=member,
+        ).count()
+
+
+class Workout(TimeStampedModel):
+    thread_ts = models.CharField(max_length=100, primary_key=True)
+    member = models.ForeignKey(
+        Member,
+        on_delete=models.CASCADE,
+        related_name="workout_set",
+        null=False,
+        blank=False,
+    )
+    objects = WorkoutManager()
+
+
+class WorkoutAdmit(TimeStampedModel):
+    admitted_by = models.ForeignKey(
+        Member,
+        on_delete=models.CASCADE,
+        related_name="admit_set",
+        null=False,
+        blank=False,
+    )
+    member = models.ForeignKey(
+        Member,
+        on_delete=models.CASCADE,
+        related_name="admitted_set",
+        null=False,
+        blank=False,
+    )
+    thread_ts = models.CharField(max_length=100)
+
+    def clean(self):
+        if not self.pk:
+            if self.admitted_by == self.member and not self.member.is_superuser:
+                raise ValidationError("자기 자신의 운동을 인정할 수 없습니다.")
+
+    class Meta:
+        unique_together = (("thread_ts", "admitted_by"),)
+
+
+class WorkoutCheer(TimeStampedModel):
+    week_count = models.SmallIntegerField(
+        validators=[MaxValueValidator(7), MinValueValidator(1)]
+    )
+    text = models.TextField(null=False, blank=False)
+
+    def create_reply_task(self, thread_ts: str, member: Member, execute_at=None):
+        return ReplyTask.objects.create(
+            thread_ts=thread_ts,
+            text=f"{member.get_tag_text()} 님, {self.text}",
+            execute_at=execute_at or timezone.now(),
+        )
