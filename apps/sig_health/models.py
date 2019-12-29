@@ -96,6 +96,9 @@ class Member(TimeStampedModel):
 
     objects = models.Manager()
 
+    regular_members = RegularMemberManager()
+    unregular_members = UnregularMemberManager()
+
     def is_regular_now(self) -> bool:
         start_date, end_date = get_week_start_end()
         meta = Meta.objects.get_main()

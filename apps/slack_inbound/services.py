@@ -1,8 +1,9 @@
 import logging
-from parser.events import ReactionAdded
+from parser.events import MessageChannels, ReactionAdded
 from parser.events.base import SlackEvent
 
 from apps.sig_health.models import Member, Meta, WorkoutAdmit
+from apps.slack_outbound.models import EmojiTask
 
 
 def create_tasks(event: SlackEvent):
@@ -23,3 +24,9 @@ def create_tasks(event: SlackEvent):
             logging.warning(e)
         else:
             admit.save()
+
+    if (
+        isinstance(event, MessageChannels)
+        and Member.regular_members.filter(slack_id=event.user).exists()
+    ):
+        EmojiTask.objects.create(name=meta.regular_member_emoji, timestamp=event.ts)
