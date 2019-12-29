@@ -108,3 +108,9 @@ SLACK_API_TOKEN = "d47b8a8a532e49760fb5893bd3be3330"
 
 SENTRY_DSN = "https://b9b5b37d933d4fcdb204f74263553928@sentry.io/1868143"
 ENVIRONMENT = "base"
+
+
+PROJECT_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
