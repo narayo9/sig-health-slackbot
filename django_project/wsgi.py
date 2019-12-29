@@ -11,6 +11,9 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sig_health_slackbot.settings")
+from django_project.sentry import sentry_init
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_project.settings.live")
 
 application = get_wsgi_application()
+sentry_init()

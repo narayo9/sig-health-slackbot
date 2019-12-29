@@ -11,7 +11,7 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-from django_project.sentry import sentry_init  # nofmt
+from django_project.sentry import sentry_init
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_project.settings.live")
 
