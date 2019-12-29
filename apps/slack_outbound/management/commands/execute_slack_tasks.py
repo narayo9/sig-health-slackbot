@@ -4,7 +4,7 @@ import sentry_sdk
 from apps.slack_outbound.models import EmojiTask, MessageTask, ReplyTask
 from django.core.management import BaseCommand
 
-from django_project.utils import sentry_init
+from django_project.sentry import sentry_init
 
 
 class Command(BaseCommand):
