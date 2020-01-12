@@ -1,5 +1,6 @@
 import traceback
 
+from django.conf import settings
 from django.db import models
 from sentry_sdk import capture_exception
 
@@ -10,18 +11,19 @@ class MessageTask(Task):
     text = models.TextField(verbose_name="보낼 텍스트", null=False, blank=False)
 
     def execute(self, commit=True):
-        chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
-        try:
-            chat_postMessage(text=self.text)
-        except BaseException:
-            traceback.print_exc()
-            capture_exception()
-            self.status = TaskStatus.FAIL
-        else:
-            self.status = TaskStatus.SUCCESS
-        finally:
-            if commit:
-                self.save()
+        if not settings.IS_TESTING:
+            chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
+            try:
+                chat_postMessage(text=self.text)
+            except BaseException:
+                traceback.print_exc()
+                capture_exception()
+                self.status = TaskStatus.FAIL
+            else:
+                self.status = TaskStatus.SUCCESS
+            finally:
+                if commit:
+                    self.save()
 
 
 class ReplyTask(Task):
@@ -31,18 +33,19 @@ class ReplyTask(Task):
     text = models.TextField(verbose_name="보낼 텍스트", null=False, blank=False)
 
     def execute(self, commit=True):
-        chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
-        try:
-            chat_postMessage(text=self.text, thread_ts=self.thread_ts)
-        except BaseException:
-            traceback.print_exc()
-            capture_exception()
-            self.status = TaskStatus.FAIL
-        else:
-            self.status = TaskStatus.SUCCESS
-        finally:
-            if commit:
-                self.save()
+        if not settings.IS_TESTING:
+            chat_postMessage = use_slack().get("chat_postMessage")  # noqa: N806
+            try:
+                chat_postMessage(text=self.text, thread_ts=self.thread_ts)
+            except BaseException:
+                traceback.print_exc()
+                capture_exception()
+                self.status = TaskStatus.FAIL
+            else:
+                self.status = TaskStatus.SUCCESS
+            finally:
+                if commit:
+                    self.save()
 
 
 class EmojiTask(Task):
@@ -54,15 +57,16 @@ class EmojiTask(Task):
     )
 
     def execute(self, commit=True):
-        reactions_add = use_slack().get("reactions_add")
-        try:
-            reactions_add(name=self.name, timestamp=self.timestamp)
-        except BaseException:
-            traceback.print_exc()
-            capture_exception()
-            self.status = TaskStatus.FAIL
-        else:
-            self.status = TaskStatus.SUCCESS
-        finally:
-            if commit:
-                self.save()
+        if not settings.IS_TESTING:
+            reactions_add = use_slack().get("reactions_add")
+            try:
+                reactions_add(name=self.name, timestamp=self.timestamp)
+            except BaseException:
+                traceback.print_exc()
+                capture_exception()
+                self.status = TaskStatus.FAIL
+            else:
+                self.status = TaskStatus.SUCCESS
+            finally:
+                if commit:
+                    self.save()

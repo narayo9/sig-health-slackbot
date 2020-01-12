@@ -54,12 +54,12 @@ class Meta(TimeStampedModel):
         verbose_name="정회원 최소 주별 운동 수",
         help_text="일주일에 이 이상 운동하면 정회원으로 등극합니다.",
     )
-    regular_member_minimum_week = models.SmallIntegerField(
-        default=3,
+    hard_mode_minimum_regular_member_workout_num = models.SmallIntegerField(
+        default=5,
         blank=True,
         null=False,
-        verbose_name="정회원 최소 근속 주수",
-        help_text="설정한 주 동안은 운동을 채우지 못해도 정회원으로 남습니다.",
+        verbose_name="하드모드 정회원 최소 주별 운동 수",
+        help_text="하드모드 정회원은 일주일에 이 이상 운동하면 정회원으로 등극합니다.",
     )
 
     objects = MetaManager()
@@ -93,14 +93,15 @@ class Member(TimeStampedModel):
     slack_id = models.CharField(max_length=100, primary_key=True)
     is_superuser = models.BooleanField(default=False)
     is_regular = models.BooleanField(default=False)
+    is_hard_mode = models.BooleanField(default=False, help_text="자체 하드 모드 여부")
 
     objects = models.Manager()
 
     regular_members = RegularMemberManager()
     unregular_members = UnregularMemberManager()
 
-    def is_regular_now(self) -> bool:
-        start_date, end_date = get_week_start_end()
+    def is_regular_on_week(self, weekdelta: int = 0) -> bool:
+        start_date, end_date = get_week_start_end(weekdelta)
         meta = Meta.objects.get_main()
         return (
             self.is_regular
@@ -114,7 +115,7 @@ class Member(TimeStampedModel):
         return f"<@{self.slack_id}>"
 
     def set_regular(self, commit=True):
-        if not self.is_regular and self.is_regular_now():
+        if not self.is_regular and self.is_regular_on_week():
             self.is_regular = True
             if commit:
                 self.save()

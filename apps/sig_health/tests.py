@@ -55,6 +55,7 @@ class WorkoutAdmitTests(TestCase):
 
 class WorkoutTests(TestCase):
     def setUp(self):
+        baker.make(Meta)
         member_list = baker.prepare(Member, _quantity=10)
         Member.objects.bulk_create(member_list)
         cheer_list = []
@@ -92,6 +93,7 @@ class WorkoutTests(TestCase):
 
 class MemberTests(TestCase):
     def setUp(self):
+        baker.make(Meta)
         self.me = Member.objects.create(slack_id="UCL25JV2R")
 
     def test_message_task(self):
