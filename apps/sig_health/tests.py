@@ -98,9 +98,9 @@ class MemberTests(TestCase):
         self.meta: Meta = baker.make(Meta)
         self.me = Member.objects.create(slack_id="UCL25JV2R")
 
-    def test_message_task(self):
+    def test_regulared_message_task(self):
         self.me.is_regular = True
-        self.me.save(update_fields=["is_regular"])
+        self.me.save()
         self.assertEqual(MessageTask.objects.count(), 1)
 
     def test_is_regular_on_this_week(self):
@@ -131,3 +131,9 @@ class MemberTests(TestCase):
             created=timezone.now(),
         )
         self.assertFalse(self.me.has_passed_minimum_on_week(-1))
+
+    def test_unregulared_message_task(self):
+        member2 = Member.objects.create(slack_id="abcd", is_regular=True)
+        member2.is_regular = False
+        member2.save()
+        self.assertEqual(MessageTask.objects.count(), 1)

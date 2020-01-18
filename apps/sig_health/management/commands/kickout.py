@@ -20,7 +20,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         sentry_init()
+        unregulared = 0
         for member in Member.regular_members.all():
             if not member.has_passed_minimum_on_week(weekdelta=options["weekdelta"]):
+                unregulared += 1
                 member.is_regular = False
                 member.save()
+
+        print(f"{unregulared} 명이 정회원에서 탈락했어요~")
