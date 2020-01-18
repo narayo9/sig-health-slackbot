@@ -109,7 +109,9 @@ class Member(TimeStampedModel):
             self.workout_set.filter(
                 created__date__gte=start_date, created__date__lte=end_date
             ).count()
-            >= meta.minimum_regular_member_workout_num
+            >= meta.hard_mode_minimum_regular_member_workout_num
+            if self.is_hard_mode
+            else meta.minimum_regular_member_workout_num
         )
 
     def get_tag_text(self):

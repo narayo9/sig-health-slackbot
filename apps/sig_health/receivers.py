@@ -40,7 +40,7 @@ def create_cheer_reply_when_workout_created(instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Workout)
-def set_regular_workout_created(instance: Workout, created, **kwargs):
+def check_regular_when_workout_created(instance: Workout, created, **kwargs):
     if created:
         if (
             not instance.member.is_regular
@@ -51,7 +51,9 @@ def set_regular_workout_created(instance: Workout, created, **kwargs):
 
 
 @receiver(pre_save, sender=Member)
-def set_regulared_member_create_message_task(instance: Member, update_fields, **kwargs):
+def create_message_task_when_member_become_regular(
+    instance: Member, update_fields, **kwargs
+):
     try:
         old_instance = Member.objects.get(pk=instance.pk)
     except Member.DoesNotExist:
@@ -62,7 +64,7 @@ def set_regulared_member_create_message_task(instance: Member, update_fields, **
 
 
 @receiver(pre_save, sender=Member)
-def set_unregulared_member_create_message_task(
+def create_message_task_when_member_become_unregular(
     instance: Member, update_fields, **kwargs
 ):
     try:
