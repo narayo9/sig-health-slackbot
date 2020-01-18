@@ -1,4 +1,5 @@
 from apps.sig_health.models import Member
+from apps.slack_outbound.models import MessageTask
 from django.core.management.base import BaseCommand
 
 from django_project.sentry import sentry_init
@@ -28,3 +29,8 @@ class Command(BaseCommand):
                 member.save()
 
         print(f"{unregulared} 명이 정회원에서 탈락했어요~")
+
+        if unregulared == 0:
+            MessageTask.objects.create(
+                text="이번 주는 정회원 탈락자가 없네요! :party-blob: :musclegrowth_rainbow: \n 모두모두 간강한 한 주 되세요~"  # noqa: B950
+            )
