@@ -1,3 +1,5 @@
+import random
+
 from apps.slack_outbound.models import ReplyTask
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -100,12 +102,11 @@ class Member(TimeStampedModel):
     regular_members = RegularMemberManager()
     unregular_members = UnregularMemberManager()
 
-    def is_regular_on_week(self, weekdelta: int = 0) -> bool:
+    def has_passed_minimum_on_week(self, weekdelta: int = 0) -> bool:
         start_date, end_date = get_week_start_end(weekdelta)
         meta = Meta.objects.get_main()
         return (
-            self.is_regular
-            or self.workout_set.filter(
+            self.workout_set.filter(
                 created__date__gte=start_date, created__date__lte=end_date
             ).count()
             >= meta.minimum_regular_member_workout_num
@@ -114,14 +115,11 @@ class Member(TimeStampedModel):
     def get_tag_text(self):
         return f"<@{self.slack_id}>"
 
-    def set_regular(self, commit=True):
-        if not self.is_regular and self.is_regular_on_week():
-            self.is_regular = True
-            if commit:
-                self.save()
-
     def get_regulared_text(self):
         return f"{self.get_tag_text()} 님, 정회원이 되신 걸 축하드려요!! :party-blob: :musclegrowth_rainbow:"  # noqa: B950
+
+    def get_unregulared_text(self):
+        return f'{["아이고", "이런", "저런", ":stuck_out_tongue_winking_eye:"][random.randint(0, 3)]}... {self.get_tag_text()}님… 정회원에서 탈락하셨군요 :blob-sad: :musclegrowth_explode: \n 이번주는 힘내보자구요!'  # noqa: B950
 
 
 class WorkoutManager(models.Manager):

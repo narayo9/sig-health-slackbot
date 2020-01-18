@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "django_extensions",
     "apps.slack_inbound.apps.SlackInboundConfig",
     "apps.slack_outbound.apps.SlackOutboundConfig",
     "apps.sig_health.apps.SigHealthConfig",

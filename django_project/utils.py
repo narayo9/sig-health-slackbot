@@ -69,13 +69,9 @@ def use_slack():
 def get_week_start_end(weekdelta: int = 0):
     return (
         (
-            datetime.datetime.now()
-            + relativedelta(weekday=MO(-1))
-            + relativedelta(weeks=weekdelta)
+            datetime.datetime.now() + relativedelta(weekday=MO(-1), weeks=weekdelta)
         ).date(),
         (
-            datetime.datetime.now()
-            + relativedelta(weekday=SU(+1))
-            + relativedelta(weeks=weekdelta)
+            datetime.datetime.now() + relativedelta(weekday=SU(+1), weeks=weekdelta)
         ).date(),
     )

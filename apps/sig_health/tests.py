@@ -1,6 +1,8 @@
 from apps.sig_health.models import Member, Meta, Workout, WorkoutAdmit, WorkoutCheer
 from apps.slack_outbound.models import MessageTask, ReplyTask
+from dateutil import relativedelta
 from django.test import TestCase
+from django.utils import timezone
 from model_bakery import baker
 
 
@@ -93,10 +95,39 @@ class WorkoutTests(TestCase):
 
 class MemberTests(TestCase):
     def setUp(self):
-        baker.make(Meta)
+        self.meta: Meta = baker.make(Meta)
         self.me = Member.objects.create(slack_id="UCL25JV2R")
 
     def test_message_task(self):
         self.me.is_regular = True
         self.me.save(update_fields=["is_regular"])
         self.assertEqual(MessageTask.objects.count(), 1)
+
+    def test_is_regular_on_this_week(self):
+        baker.make(
+            Workout,
+            _quantity=self.meta.minimum_regular_member_workout_num,
+            member=self.me,
+        )
+        self.assertTrue(self.me.has_passed_minimum_on_week())
+
+    def test_is_not_regular_on_this_week(self):
+        self.assertFalse(self.me.has_passed_minimum_on_week())
+
+    def test_is_regular_on_last_week(self):
+        baker.make(
+            Workout,
+            _quantity=self.meta.minimum_regular_member_workout_num,
+            member=self.me,
+            created=timezone.now() + relativedelta.relativedelta(weeks=-1),
+        )
+        self.assertTrue(self.me.has_passed_minimum_on_week(-1))
+
+    def test_is_not_regular_on_last_week(self):
+        baker.make(
+            Workout,
+            _quantity=self.meta.minimum_regular_member_workout_num,
+            member=self.me,
+            created=timezone.now(),
+        )
+        self.assertFalse(self.me.has_passed_minimum_on_week(-1))

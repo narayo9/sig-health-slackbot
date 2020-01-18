@@ -40,9 +40,14 @@ def create_cheer_reply_when_workout_created(instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Workout)
-def set_regular_workout_created(instance, created, **kwargs):
+def set_regular_workout_created(instance: Workout, created, **kwargs):
     if created:
-        instance.member.set_regular()
+        if (
+            not instance.member.is_regular
+            and instance.member.has_passed_minimum_on_week()
+        ):
+            instance.member.is_regular = True
+            instance.member.save()
 
 
 @receiver(pre_save, sender=Member)
@@ -54,3 +59,16 @@ def set_regulared_member_create_message_task(instance: Member, update_fields, **
     else:
         if not old_instance.is_regular and instance.is_regular:
             MessageTask.objects.create(text=instance.get_regulared_text())
+
+
+@receiver(pre_save, sender=Member)
+def set_unregulared_member_create_message_task(
+    instance: Member, update_fields, **kwargs
+):
+    try:
+        old_instance = Member.objects.get(pk=instance.pk)
+    except Member.DoesNotExist:
+        pass
+    else:
+        if old_instance.is_regular and not instance.is_regular:
+            MessageTask.objects.create(text=instance.get_unregulared_text())
