@@ -105,11 +105,10 @@ class Member(TimeStampedModel):
     def has_passed_minimum_on_week(self, weekdelta: int = 0) -> bool:
         start_date, end_date = get_week_start_end(weekdelta)
         meta = Meta.objects.get_main()
-        return (
-            self.workout_set.filter(
-                created__date__gte=start_date, created__date__lte=end_date
-            ).count()
-            >= meta.hard_mode_minimum_regular_member_workout_num
+        return self.workout_set.filter(
+            created__date__gte=start_date, created__date__lte=end_date
+        ).count() >= (
+            meta.hard_mode_minimum_regular_member_workout_num
             if self.is_hard_mode
             else meta.minimum_regular_member_workout_num
         )
